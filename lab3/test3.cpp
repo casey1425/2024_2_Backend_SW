@@ -9,7 +9,7 @@
 using namespace std;
 
 int main(){
-    int s = socket(AF_INET, SOCK_STREAM, IPPROTO_UDP);
+    int s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
     if (s < 0) return 1;
 
     string buf = "Hello, world!";

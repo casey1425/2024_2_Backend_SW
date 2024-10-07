@@ -5,16 +5,12 @@
 #include <unistd.h>
 #include <iostream>
 #include <string>
-#include <sstream>
 
 using namespace std;
 
 int main() {
-    int s = socket(AF_INET, SOCK_DGRAM, 0);
-    if (s < 0) {
-        cerr << "Socket creation failed!" << endl;
-        return 1;
-    }
+    int s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+    if (s < 0) return 1;
 
     struct sockaddr_in sin;
     memset(&sin, 0, sizeof(sin));
@@ -22,34 +18,28 @@ int main() {
     sin.sin_port = htons(10000);
     sin.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    string input;
-    
-    while (getline(cin, input)) {
-        stringstream ss(input);
-        string word;
+    string buf;
+    char buf2[65536];
+    socklen_t sin_size = sizeof(sin);
 
-        while (ss >> word) {
-            int numBytes = sendto(s, word.c_str(), word.length(), 0, (struct sockaddr*)&sin, sizeof(sin));
-            if (numBytes < 0) {
-                cerr << "Error sending message!" << endl;
-                continue;
-            }
+    while (true) {
+        cout << "Enter message: ";
+        if (!getline(cin, buf)) {
+            break;
+        }
 
-            cout << "Sent: " << numBytes << endl;
-            char buf2[65536];
-            socklen_t sin_size = sizeof(sin);
-            numBytes = recvfrom(s, buf2, sizeof(buf2) - 1, 0, (struct sockaddr*)&sin, &sin_size);
+        int numBytesSent = sendto(s, buf.c_str(), buf.length(), 0, (struct sockaddr*)&sin, sizeof(sin));
+        cout << "Sent: " << numBytesSent << endl;
 
-            if (numBytes > 0) {
-                buf2[numBytes] = '\0';
-                cout << "Received: " << numBytes << endl;
-                cout << "From: " << inet_ntoa(sin.sin_addr) << endl;
-                cout << buf2 << endl;
-            } else {
-                cerr << "Error receiving message!" << endl;
-            }
+        int numBytesReceived = recvfrom(s, buf2, sizeof(buf2), 0, (struct sockaddr*)&sin, &sin_size);
+        if (numBytesReceived > 0) {
+            buf2[numBytesReceived] = '\0';
+            cout << "Received: " << numBytesReceived << endl;
+            cout << "From: " << inet_ntoa(sin.sin_addr) << endl;
+            cout << buf2 << endl;
         }
     }
+
     close(s);
     return 0;
 }
