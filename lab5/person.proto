@@ -1,0 +1,18 @@
+syntax = "proto2";
+
+package mju;
+
+message Person {
+    required string name = 1;//반드시 필요한 필드
+    optional int32 id = 2;//선택적 필드
+
+    enum PhoneType {
+        MOBILE = 0;//mobile을 사용하면 0으로 매핑
+        HOME = 1;//home을 사용하면 1로 매핑
+    }
+    message PhoneNumber {
+        optional string number = 1;
+        optional PhoneType type = 2 [default = HOME];
+    }
+    repeated PhoneNumber phones = 4;//배열형태
+}       
