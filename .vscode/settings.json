@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "iostream": "cpp",
-        "*.inc": "cpp"
+        "*.inc": "cpp",
+        "condition_variable": "cpp"
     },
     "C_Cpp.errorSquiggles": "disabled"
 }
