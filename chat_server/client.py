@@ -5,7 +5,6 @@ import queue
 import select
 import argparse
 from google.protobuf.message import DecodeError
-import myproto_pb2
 from enum import Enum
 from concurrent.futures import ThreadPoolExecutor
 
