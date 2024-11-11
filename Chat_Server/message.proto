@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+message ChatMessage {
+    string name = 1;
+    string room_number = 2;
+    string message = 3;
+    string room_name = 4;
+    string message=5;
+}
