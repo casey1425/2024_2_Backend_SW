@@ -3,7 +3,7 @@ import threading
 import sys
 import json
 import errno
-import message_pb2 as protobuf_pb2  # 컴파일된 Protobuf 파일을 불러옵니다
+import message_pb2 as protobuf_pb2
 
 # 기본 설정
 server_ip = '127.0.0.1'
@@ -14,7 +14,7 @@ client_name = None
 room_number = None
 room_name = None
 client_socket = None
-message_format = 'json'  # JSON이 기본값
+message_format = 'json'
 
 lock = threading.Lock()
 
