@@ -3,9 +3,15 @@ import threading
 import sys
 import json
 import errno
+import argparse
 import message_pb2 as protobuf_pb2
 
-# 기본 설정
+parser = argparse.ArgumentParser(description="Chat Client")
+parser.add_argument("--format", choices=["json", "protobuf"], default="json", help="Message format: json or protobuf")
+args = parser.parse_args()
+
+message_format = args.format
+
 server_ip = '127.0.0.1'
 server_port = 10115
 client_ip = '127.0.0.1'
@@ -14,7 +20,6 @@ client_name = None
 room_number = None
 room_name = None
 client_socket = None
-message_format = 'json'
 
 lock = threading.Lock()
 
@@ -40,6 +45,9 @@ def receive_message():
     while True:
         try:
             data = client_socket.recv(1024)
+            if not data:
+                break
+
             if message_format == 'json':
                 message = json.loads(data.decode())
             elif message_format == 'protobuf':
@@ -151,6 +159,22 @@ def handle_command(command):
         handle_help_command(command)
     else:
         send_message("message", message=command)
+
+def send_name():
+    global client_name
+    if client_name is not None:
+        send_message('/name', name=client_name)
+
+send_name()
+
+def send_room():
+    global room_number, room_name
+    if room_number is not None:
+        send_message('/join', room_number=room_number)
+    elif room_name is not None:
+        send_message('/create', room_name=room_name)
+
+send_room()
 
 receive_thread = threading.Thread(target=receive_message)
 receive_thread.daemon = True
